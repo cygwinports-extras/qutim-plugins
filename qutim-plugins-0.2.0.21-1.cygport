@@ -1,0 +1,40 @@
+SVN_URI="http://qutim-plugin.googlecode.com/svn"
+SVN_BRANCH="tags/0.2"
+SVN_REV=${PV[4]}
+
+inherit qt4-cmake qt4-qmake kde4 svn
+
+DESCRIPTION="Plugins for qutIM IM client"
+HOMEPAGE="http://code.google.com/p/qutim-plugin/"
+
+src_compile() {
+	cd ${B}
+	lndirs
+
+	for plg in msn
+	do
+		pushd ${plg}
+		qt4_cmake_compile
+		popd
+	done
+
+	for plg in chess connectioncheck floaties imagepub protocolicon twitter \
+	           urlpreview weather
+	do
+		pushd ${plg}
+		qt4_qmake_compile
+		popd
+	done
+
+	for plg in kde
+	do
+		pushd ${plg}
+		kde4_compile
+		popd
+	done
+}
+
+src_install() {
+	exeinto /usr/lib/qutim
+	doexe $(find ${B} -name '*.dll')
+}
